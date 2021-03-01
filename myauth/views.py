@@ -1,8 +1,10 @@
 from django.views import View
 from django.shortcuts import render, redirect
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.conf import settings
 from django.contrib.auth import login, authenticate
+from django.urls import reverse_lazy
+from django.contrib import messages
 
 from .forms import SignUpForm
 
@@ -42,3 +44,12 @@ class RegisterView(View):
             return redirect('home')
         
         return render(request, self.template_name, {'form': form})
+
+
+class CustomPasswordChangeView(PasswordChangeView):
+    template_name = 'accounts/password_change.html'
+    success_url = reverse_lazy('home')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Password kamu berhasil diubah')
+        return super().form_valid(form)
